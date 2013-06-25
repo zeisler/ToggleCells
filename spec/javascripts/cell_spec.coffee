@@ -2,16 +2,16 @@
 
 describe "Cell", ->
   beforeEach ->
-    @page = loadFixtures('../../../../index.html')
+    @page = loadFixtures('index.html')
 
   it "toggles cell when clicked", ->
-    $(@page).ready ->
+    $().ready ->
       cells = $('.cell')
       console.log cells
       cells[0].click()
       expect(cells[0]).toHaveClass("blue")
   it "toggles neighboring cells on click", ->
-    $(@page).ready ->
+    $().ready ->
       cells = $('.cell')
       console.log cells
       cells[0].click()

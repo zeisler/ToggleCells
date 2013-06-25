@@ -99,9 +99,23 @@ jasmine.getStyleFixtures = function() {
 }
 
 jasmine.Fixtures = function() {
-  this.containerId = 'jasmine-fixtures'
-  this.fixturesCache_ = {}
-  this.fixturesPath = 'spec/javascripts/fixtures'
+  this.containerId = 'jasmine-fixtures';
+  this.fixturesCache_ = {};
+  var path = "";
+  $.ajax(
+    {
+      async: false,
+      url: 'http://0.0.0.0:3000/',
+      success: function(data, textStatus) {
+              path = 'http://0.0.0.0:3000/';
+              fixturesPath = path;
+            }, error: function(jqXHR, textStatus, errorThrown) {
+              path = '../../public';
+              console.log('http://0.0.0.0:3000/ failure!');
+              fixturesPath = path;
+            }
+    });
+  this.fixturesPath = path;
 }
 
 jasmine.Fixtures.prototype.set = function(html) {
