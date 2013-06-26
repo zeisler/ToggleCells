@@ -1,34 +1,76 @@
-toggleIfNeighbor = (target, $cell) ->
-  cell = $($cell)
-  targetRow = target.data("row")
-  targetColumn = target.data("column")
-  cellRow = cell.data("row")
-  cellColumn = cell.data("column")
-  cell.toggleClass "blue"  if targetColumn is cellColumn and ((targetRow + 1 is cellRow) or (targetRow - 1 is cellRow))
-  cell.toggleClass "blue"  if targetRow is cellRow and ((targetColumn + 1 is cellColumn) or (targetColumn - 1 is cellColumn))
+window.Cells = class Cells
+  run: (test) ->
+    if test == false
+      $('body').html(@generate_grid())
+      grid = $('body')
+      console.log(grid.find('.cell'))
+    else
+      grid = @generate_grid()
+    # console.log(grid.find('.cell'))
+    @set_click(grid)
+    @set_wipe(grid)
+    @set_alert(grid)
+    return grid
+  toggleIfNeighbor = (target, $cell) ->
+    cell = $($cell)
+    targetRow = target.data("row")
+    targetColumn = target.data("column")
+    cellRow = cell.data("row")
+    cellColumn = cell.data("column")
+    cell.toggleClass "blue"  if targetColumn is cellColumn and ((targetRow + 1 is cellRow) or (targetRow - 1 is cellRow))
+    cell.toggleClass "blue"  if targetRow is cellRow and ((targetColumn + 1 is cellColumn) or (targetColumn - 1 is cellColumn))
+  send_alert: (input) ->
+      alert(input)
+      console.log("alert was sent")
+  set_click: (grid) ->
+    # console.log(grid)
+    console.log(grid.find('.cell'))
+    cells = grid.find('.cell')
+    console.log(cells)
 
-# console.log(cell.data("row"));
-# console.log(target.data("row"));
+    cells.on "click", ->
+      console.log("a cell was clicked")
+      $(@).toggleClass "blue"
+      cells = grid.find('.cell')
+      clickedCell = $(this)
+      row = $(this).data("row")
+      column = $(this).data("column")
+      for cell in cells
+        toggleIfNeighbor clickedCell, cell
+  set_wipe: (grid) ->
+    wipe = grid.find('#wipe')
+    cells = grid.find('.cell')
+    wipe.on "click", ->
+      cells.removeClass "blue"
+  set_alert: (grid) ->
+    console.log("set alert")
+    gameBox = grid.find('#gameBox')
+    cells = grid.find('.cell')
+    cells.on "click", =>
+      console.log("in gameBox bind")
+      if cells.not(".blue").length == 0
+        @send_alert("congratulations")
+  generate_grid: ->
+    grid = $("<div id = \"gameBox\">\
+      <div>\
+          <div class = \"cell\" data-row=\"1\" data-column=\"1\"></div>\
+          <div class = \"cell\" data-row=\"1\" data-column=\"2\"></div>\
+          <div class = \"cell\" data-row=\"1\" data-column=\"3\"></div>\
+      </div>\
+      <div>\
+          <div class = \"cell\" data-row=\"2\" data-column=\"1\"></div>\
+          <div class = \"cell\" data-row=\"2\" data-column=\"2\"></div>\
+          <div class = \"cell\" data-row=\"2\" data-column=\"3\"></div>\
+      </div>\
+      <div>\
+          <div class = \"cell\" data-row=\"3\" data-column=\"1\"></div>\
+          <div class = \"cell\" data-row=\"3\" data-column=\"2\"></div>\
+          <div class = \"cell\" data-row=\"3\" data-column=\"3\"></div>\
+      </div>\
+      <a id= \"wipe\" href=\"\">wipe</a>\
+    </div>")
+    return grid
+
 $(document).ready ->
-  $(".cell").on "click", ->
-    $(this).toggleClass "blue"
-    cells = $(".cell")
-    clickedCell = $(this)
-    row = $(this).data("row")
-    column = $(this).data("column")
-
-    # console.log(row);
-    # console.log(column);
-    cells.each ->
-      toggleIfNeighbor clickedCell, this
-
-
-
-$(document).ready ->
-  $("#wipe").on "click", ->
-    $(".cell").removeClass "blue"
-
-
-$(document).ready ->
-  $("#gameBox").on "click", ->
-    alert "congratulations"  unless $(".cell").not(".blue").length
+  game = new Cells
+  grid = game.run(false)
