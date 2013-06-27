@@ -1,6 +1,6 @@
 window.Cells = class Cells
   grid: null
-  grid_size: 16
+  grid_size: 9
   with: null
   run: ->
     console.log "Inside run"
@@ -32,29 +32,33 @@ window.Cells = class Cells
   set_grid_select: ->
     select_grid_size = $('<select id="size"></select>')
     min = 3
-    max = 20
+    max = 30
     range = [min..max]
 
     for number in range
       value = (number * number)
-      select_grid_size.append $("<option value='#{value}'>#{value}</option>")
+      select_grid_size.append $("<option value='#{value}'>#{number} x #{number}</option>")
 
     option = $(select_grid_size).find('option')
     selected = $('select option[value="' + @grid_size + '"]')
     selected.attr("selected", "selected")
-    @grid.append $('<label for="size">Grid Size</label>')
-    @grid.append $(select_grid_size)
+    @grid.prepend $(select_grid_size)
+    @grid.prepend $('<label for="size">Grid Size</label>')
+
     console.log "Inside set grid"
     that = this
-    # $(select_grid_size).change "click", ->
-    #   console.log "Inside option click bind"
-    #   @grid_size = $("select option:selected").val()
-    #   console.log "$(this).attr(\"selected\").text() = " + $("select option:selected").val()
-    #   console.log "this grid size is " + @grid_size
-    #   $(@grid).find('#gameBox .row').empty()
-    #   $('#gameBox .row').empty()
-    #   that.run()
-
+    $(select_grid_size).change "click", ->
+      console.log "Inside option click bind"
+      that.grid_size = $("select option:selected").val()
+      console.log "$(this).attr(\"selected\").text() = " + $("select option:selected").val()
+      console.log "this grid size is " + that.grid_size
+      $(@grid).find('#gameBox .row').empty()
+      $('#gameBox .row').empty()
+      that.generate_grid()
+      that.set_click()
+      that.set_wipe()
+      that.set_alert()
+      $('body').append(that.grid)
 
   set_click: ->
     cells = @grid.find('.cell')
